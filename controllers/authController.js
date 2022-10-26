@@ -8,6 +8,10 @@ const User = db.users;
 //signup
 const signUp = async (req, res) => {
     var { email, name, password } = req.body;
+    const emailAlreadyExists = await User.findOne({ where: { email } });
+    if (emailAlreadyExists) {
+        throw new BadRequestError('Email already exists');
+    }
     const salt = await bcrypt.genSalt(10); //password hasing
     password = await bcrypt.hash(password, salt);
     const user = await User.create({ name, email, password });
